@@ -23,18 +23,22 @@ import { Router, Route, Switch, Redirect } from "react-router-dom";
 // core components
 import Admin from "layouts/Admin.js";
 import RTL from "layouts/RTL.js";
+import Sginin from "layouts/Sginin.js";
 
 import "assets/css/material-dashboard-react.css?v=1.8.0";
-
+import { Provider } from 'react-redux';
 const hist = createBrowserHistory();
 
 ReactDOM.render(
-  <Router history={hist}>
-    <Switch>
-      <Route path="/admin" component={Admin} />
-      <Route path="/rtl" component={RTL} />
-      <Redirect from="/" to="/admin/dashboard" />
-    </Switch>
-  </Router>,
+  <Provider store={store}>
+    <Router history={hist}>
+      <Switch>
+        <Route path="/admin" component={Admin} />
+        <Route path="/rtl" component={RTL} />
+        <Route path="/signin" component={Sginin} />
+        <Redirect from="/" to="/admin/dashboard" />
+      </Switch>
+    </Router>,
+  </Provider>,
   document.getElementById("root")
 );
