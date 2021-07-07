@@ -2,10 +2,10 @@ import * as AT from '../actions/actionsTypes'
 import React from 'react'
 
 const initialState = {
-    activeUser = ""
+    activeUser : ""
 }
 
-export const activeUserReducer = (state = initialState, action) => {
+const activeUserReducer = (state = initialState, action) => {
     switch (action.type) {
         case AT.ON_LOGIN:
             return {
@@ -20,3 +20,5 @@ export const activeUserReducer = (state = initialState, action) => {
 
     }
 }
+
+export default activeUserReducer;
