@@ -28,8 +28,8 @@ router.post('/register', async (req, res) => {
     });
     try {
         const saveUser = await user.save()
-      //  res.send(saveUser);
-        res.send({user:user._id});
+        //  res.send(saveUser);
+        res.send({ user: user._id });
     } catch (error) {
         res.status(400).send(err)
     }
@@ -37,7 +37,7 @@ router.post('/register', async (req, res) => {
 
 //login
 
-router.post('/login',(req,res)=>{
+router.post('/login',async (req, res) => {
     // validate
     // const {error} = loginValidation(req.body)
     // if(error){
@@ -45,11 +45,15 @@ router.post('/login',(req,res)=>{
     // }
     const user = await User.findOne({ email: req.body.email })
     if (!user) {
-        return res.status(400).send('Email dosent exist')
+        return res.status(400).send('1Email or password is worng')
     }
     //validate password
-    const 
+    const validPass = await bcrypt.compare(req.body.password, user.password)
+    if (!validPass) {
+        return res.status(400).send('2Email or password is worng')
+    }
 
+    res.send(user)
 
 })
 module.exports = router;
