@@ -3,14 +3,15 @@ const User = require('../model/User');
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { regValidation, loginValidation } = require('../validation')
+const verify = require('./verifyToken')
 
 router.post('/register', async (req, res) => {
+    
     // validate
     // const {error} = regValidation(req.body)
     // if(error){
     //     return res.status(400).send(error.details[0].massage)
     // }
-
 
     //checking if mail exist
     const emailExist = await User.findOne({ email: req.body.email })
@@ -57,8 +58,13 @@ router.post('/login',async (req, res) => {
     //create and assign token
     const token =jwt.sign({_id:user._id},process.env.TOKEN_SECRET)
     res.header('auth-token',token).send(token)
-
-   // res.send(user)
-
 })
+
+router.get("/logout",verify, (req, res)=>{
+    req.user.deleteToken(req.token,(err)=>{
+        if(err) return res.status(400).send(err);
+        res.sendStatus(200);
+    })
+  });
+
 module.exports = router;
