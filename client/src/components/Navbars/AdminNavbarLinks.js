@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import classNames from "classnames";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -20,13 +20,24 @@ import CustomInput from "components/CustomInput/CustomInput.js";
 import Button from "components/CustomButtons/Button.js";
 
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
+import * as action from 'redux/actions/actions';
+import { useDispatch, useSelector } from "react-redux";
 
 const useStyles = makeStyles(styles);
 
 export default function AdminNavbarLinks() {
+  //const dispatch = useDispatch();
+  //const token = useSelector(state => (state && state.activeUserToken)?state.activeUserToken:null);
   const classes = useStyles();
   const [openNotification, setOpenNotification] = React.useState(null);
   const [openProfile, setOpenProfile] = React.useState(null);
+
+  // useEffect(() => {
+  //   if(!token){
+  //     window.location.href = '/login'
+  //   }
+  // }, [token]);
+
   const handleClickNotification = event => {
     if (openNotification && openNotification.contains(event.target)) {
       setOpenNotification(null);
@@ -44,9 +55,13 @@ export default function AdminNavbarLinks() {
       setOpenProfile(event.currentTarget);
     }
   };
+
+
   const handleCloseProfile = () => {
-    setOpenProfile(null);
+    //dispatch(action.onLogOut())
   };
+
+
   return (
     <div>
       <div className={classes.searchWrapper}>

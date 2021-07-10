@@ -6,7 +6,7 @@ const { regValidation, loginValidation } = require('../validation')
 const verify = require('./verifyToken')
 
 router.post('/register', async (req, res) => {
-    
+
     // validate
     // const {error} = regValidation(req.body)
     // if(error){
@@ -39,18 +39,25 @@ router.post('/register', async (req, res) => {
 
 //login
 
-router.post('/login',async (req, res) => {
+const cors = require('cors')
+var corsOptions = {
+    origin: 'localhost:3000'
+}
+router.post('/login', cors(), async (req, res) => {
     // validate
     // const {error} = loginValidation(req.body)
     // if(error){
     //     return res.status(400).send(error.details[0].massage)
     // }
-  
-  
+
+
     const user = await User.findOne({ email: req.body.email })
     if (!user) {
         return res.status(400).send('1Email or password is worng')
     }
+
+    console.log(req.body);
+    console.log(user);
     //validate password
     const validPass = await bcrypt.compare(req.body.password, user.password)
     if (!validPass) {
@@ -58,15 +65,15 @@ router.post('/login',async (req, res) => {
     }
 
     //create and assign token
-    const token =jwt.sign({_id:user._id},process.env.TOKEN_SECRET)
-    res.header('auth-token',token).send(token)
+    const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET)
+    res.header('auth-token', token).send(token)
 })
 
-router.get("/logout",verify, (req, res)=>{
-    req.user.deleteToken(req.token,(err)=>{
-        if(err) return res.status(400).send(err);
+router.post("/logout", verify, (req, res) => {
+    req.user.deleteToken(req.token, (err) => {
+        if (err) return res.status(400).send(err);
         res.sendStatus(200);
     })
-  });
+});
 
 module.exports = router;

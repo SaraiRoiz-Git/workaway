@@ -1,14 +1,14 @@
 import * as AT from './actionsTypes'
 
-export const onLogin = (active_user) => dispatch => {
-    return (dispatch9({
+export const onLogin = (token) => dispatch => {
+    return (dispatch({
         type: AT.ON_LOGIN,
-        payload: active_user
+        payload: token
     }))
 }
 
 export const onLogOut = () => dispatch => {
-    return (dispatch9({
+    return (dispatch({
         type: AT.ON_LOGOUT
     }))
 }

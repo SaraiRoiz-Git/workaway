@@ -1,10 +1,8 @@
-import React, { useCallback, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -12,7 +10,9 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import axios from 'axios';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import * as action from 'redux/actions/actions';
+import { Modal } from 'react-bootstrap'
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -40,20 +40,31 @@ export default function Login() {
   const dispatch = useDispatch();
   const [email, setEmail] = useState(null)
   const [password, setPassword] = useState(null)
+  const [displayModal, setmodalDisplay] = useState(false)
 
-  axios.defaults.baseURL = 'http://localhost:3000/api/user'
-  axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+  // const state = useSelector(state => state);
+  // useEffect(() => { console.log("state", state) }, [state]);
 
   const submitLogin = async (event) => {
     // console.log(email, password)
-    axios.post('/login', { email, password }, { "Content-Type": "application/json" }).then(function (response) {
-      //handle success
-      console.log(response);
+
+
+    axios.post('http://localhost:3000/api/user/login', { email, password }, { "Content-Type": "application/json", 'Access-Control-Allow-Origin': '*' }).then((response) => {
+      if (response) {
+        if (response.status == 200) {
+          dispatch(action.onLogin(response.data))
+          window.location.href = '/admin'
+        } else
+          setmodalDisplay(true);
+      }
     })
       .catch(function (response) {
-        //handle error
-        console.log(response);
+        setmodalDisplay(true);
       })
+  }
+
+  const handleClose = () => {
+    setmodalDisplay(false)
   }
 
   return (
@@ -114,6 +125,15 @@ export default function Login() {
           </Grid>
         </form>
       </div>
+      <Modal show={displayModal} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Error</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Email or Password is incorrect</p>
+        </Modal.Body>
+      </Modal>
+
     </Container>
   );
 }

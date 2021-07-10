@@ -10,12 +10,14 @@ const activeUserReducer = (state = initialState, action) => {
         case AT.ON_LOGIN:
             return {
                 ...state,
-                activeUser: action.payload
+                activeUserToken: action.payload,
+                activeUser:true
             };
         case AT.ON_LOGOUT:
             return {
                 ...state,
-                activeUser: ""
+                activeUserToken: "",
+                activeUser:false
             };
 
     }
