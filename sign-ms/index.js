@@ -3,7 +3,7 @@ const dotenv = require('dotenv')
 const mongoose = require('mongoose');
 // import Routes
 const authRoute = require('./routes/auth');
-const postRoute = require('./routes/post');
+const cors =require('cors')
 
 const app = express();
 dotenv.config();
@@ -19,7 +19,7 @@ mongoose.connect(process.env.DB_CONNECT, { useNewUrlParser: true,useUnifiedTopol
 
 //Routh Midelware
 app.use('/api/user', authRoute);
-//app.use('/api/post', postRoute);
+app.use(cors())
 
 const port = process.env.PORT || 300
 app.listen(port, () => {

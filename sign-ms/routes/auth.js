@@ -45,6 +45,8 @@ router.post('/login',async (req, res) => {
     // if(error){
     //     return res.status(400).send(error.details[0].massage)
     // }
+  
+  
     const user = await User.findOne({ email: req.body.email })
     if (!user) {
         return res.status(400).send('1Email or password is worng')
