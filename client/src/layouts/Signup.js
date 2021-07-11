@@ -3,19 +3,17 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useDispatch } from 'react-redux';
-import axios from 'axios';
 import * as action from 'redux/actions/actions';
 import { useHistory } from 'react-router-dom';
+import { Modal } from 'react-bootstrap'
+import { serverCallPost } from 'serverReq/axios';
 
 function Copyright() {
     return (
@@ -59,22 +57,28 @@ export default function SignUp() {
     const [email, setEmail] = useState(null)
     const [password, setPassword] = useState(null)
     const [passwordConfirm, setPasswordConfirm] = useState(null)
+    const [displayModal, setmodalDisplay] = useState(false)
+    const [error, setError] = useState(false)
     const history = useHistory();
 
-    const submitSignup = async (event) => {
-        axios.post('http://localhost:3000/api/user/signup', { name, lastName, email, password }, 
-        { "Content-Type": "application/json", 'Access-Control-Allow-Origin': '*' }).then((response) => {
-            if (response) {
-                if (response.status == 200) {
-                    dispatch(action.onLogin(response.data))
-                    history.push('/admin');
-                }
+    const callbackSucss = (response) => {
+        if (response) {
+            if (response.status == 200) {
+                dispatch(action.onLogin(response.data))
+                history.push('/admin');
             }
-        })
-            .catch(function (response) {
-               
-            })
+        }
     }
+
+    const callbackFailur = (response) => {
+        setmodalDisplay(true);
+        setError(response)
+    }
+
+    const submitSignup = async () => {
+        serverCallPost('signup', { name, lastName, email, password }, callbackSucss, callbackFailur)
+    }
+
 
     return (
         <Container component="main" maxWidth="xs">
@@ -177,6 +181,14 @@ export default function SignUp() {
                         </Grid>
                     </Grid>
                 </form>
+                <Modal show={displayModal} onHide={() => setmodalDisplay(false)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Error</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>{error ? error : "Somthing went worng"}</p>
+                    </Modal.Body>
+                </Modal>
             </div>
         </Container>
     );

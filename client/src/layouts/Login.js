@@ -9,11 +9,11 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import * as action from 'redux/actions/actions';
 import { Modal } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom';
+import { serverCallPost } from 'serverReq/axios';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -42,29 +42,33 @@ export default function Login() {
   const [email, setEmail] = useState(null)
   const [password, setPassword] = useState(null)
   const [displayModal, setmodalDisplay] = useState(false)
+  const [error, setError] = useState(false)
   const history = useHistory();
 
   const state = useSelector(state => state);
+
   useEffect(() => { console.log("state", state) }, [state]);
 
-  const submitLogin = async (event) => {
-    axios.post('http://localhost:3000/api/user/login', { email, password }, { "Content-Type": "application/json", 'Access-Control-Allow-Origin': '*' }).then((response) => {
-      if (response) {
-        if (response.status == 200) {
-          dispatch(action.onLogin(response.data))
-          history.push('/admin');
-        } else
-          setmodalDisplay(true);
-      }
-    })
-      .catch(function (response) {
+  const callbackSucss = (response) => {
+    if (response) {
+      if (response.status == 200) {
+        dispatch(action.onLogin(response.data))
+        history.push('/admin');
+      } else
         setmodalDisplay(true);
-      })
+    }
   }
 
-  const handleClose = () => {
-    setmodalDisplay(false)
+  const callbackFailur = (response)=>{
+    setmodalDisplay(true);
+    setError(response.response.data)
   }
+
+  const submitLogin = async (event) => {
+    serverCallPost('login',{ email, password }, callbackSucss, callbackFailur)
+  }
+
+ 
 
   return (
     <Container component="main" maxWidth="xs">
@@ -124,15 +128,14 @@ export default function Login() {
           </Grid>
         </form>
       </div>
-      <Modal show={displayModal} onHide={handleClose}>
+      <Modal show={displayModal} onHide={() => setmodalDisplay(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Error</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Email or Password is incorrect</p>
+          <p>{error?error:"Somthing went worng"}</p>
         </Modal.Body>
       </Modal>
-
     </Container>
   );
 }

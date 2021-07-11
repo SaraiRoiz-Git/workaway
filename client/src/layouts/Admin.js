@@ -19,7 +19,6 @@ import bgImage from "assets/img/sidebar-2.jpg";
 import logo from "assets/img/reactlogo.png";
 
 let ps;
-
 const switchRoutes = (
   <Switch>
     {routes.map((prop, key) => {
