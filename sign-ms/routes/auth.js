@@ -5,13 +5,7 @@ const jwt = require('jsonwebtoken')
 const { regValidation, loginValidation } = require('../validation')
 const verify = require('./verifyToken')
 
-router.post('/register', async (req, res) => {
-
-    // validate
-    // const {error} = regValidation(req.body)
-    // if(error){
-    //     return res.status(400).send(error.details[0].massage)
-    // }
+router.post('/signup', async (req, res) => {
 
     //checking if mail exist
     const emailExist = await User.findOne({ email: req.body.email })
@@ -25,6 +19,7 @@ router.post('/register', async (req, res) => {
 
     const user = new User({
         name: req.body.name,
+        lastName: req.body.name,
         email: req.body.email,
         password: hashPassword
     });
@@ -70,10 +65,11 @@ router.post('/login', cors(), async (req, res) => {
 })
 
 router.post("/logout", verify, (req, res) => {
-    req.user.deleteToken(req.token, (err) => {
-        if (err) return res.status(400).send(err);
-        res.sendStatus(200);
-    })
+    res.sendStatus(200);
+});
+
+router.get("/data", verify, (req, res) => {
+    return res.sendStatus(200).send("ok");
 });
 
 module.exports = router;

@@ -2,12 +2,14 @@ import * as AT from '../actions/actionsTypes'
 import React from 'react'
 
 const initialState = {
-    activeUser : ""
+    activeUser : "",
 }
 
 const activeUserReducer = (state = initialState, action) => {
     switch (action.type) {
         case AT.ON_LOGIN:
+            console.log('AT.ON_LOGIN')
+            console.log(action.payload)
             return {
                 ...state,
                 activeUserToken: action.payload,
@@ -19,6 +21,9 @@ const activeUserReducer = (state = initialState, action) => {
                 activeUserToken: "",
                 activeUser:false
             };
+
+            default:
+                return state;
 
     }
 }

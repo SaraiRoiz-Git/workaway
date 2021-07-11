@@ -5,14 +5,14 @@ const Joi = require('@hapi/joi')
 const regValidation = (data)=>{
     const schema = {
         name: Joi.string()
-            .min(6)
+            .min(1)
             .required(),
         email: Joi.string()
-            .min(6)
+            .min(1)
             .required()
             .email(),
         password: Joi.string()
-            .min(6)
+            .min(1)
             .required()
     };
     return Joi.validate(data,schema)

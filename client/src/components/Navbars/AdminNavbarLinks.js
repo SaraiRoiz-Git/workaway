@@ -22,21 +22,26 @@ import Button from "components/CustomButtons/Button.js";
 import styles from "assets/jss/material-dashboard-react/components/headerLinksStyle.js";
 import * as action from 'redux/actions/actions';
 import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import axios from "axios";
 
 const useStyles = makeStyles(styles);
 
 export default function AdminNavbarLinks() {
-  //const dispatch = useDispatch();
-  //const token = useSelector(state => (state && state.activeUserToken)?state.activeUserToken:null);
+  const dispatch = useDispatch();
+  const token = useSelector(state => state.activeUserToken);
   const classes = useStyles();
+  const history = useHistory();
   const [openNotification, setOpenNotification] = React.useState(null);
   const [openProfile, setOpenProfile] = React.useState(null);
+  const state = useSelector(state => state);
+  useEffect(() => { console.log("state", state) }, [state]);
 
-  // useEffect(() => {
-  //   if(!token){
-  //     window.location.href = '/login'
-  //   }
-  // }, [token]);
+  useEffect(() => {
+    if (!token) {
+    history.push('/login')
+    }
+  }, [token]);
 
   const handleClickNotification = event => {
     if (openNotification && openNotification.contains(event.target)) {
@@ -55,10 +60,10 @@ export default function AdminNavbarLinks() {
       setOpenProfile(event.currentTarget);
     }
   };
-
-
+  
   const handleCloseProfile = () => {
-    //dispatch(action.onLogOut())
+    axios.post('http://localhost:3000/api/user/logout',token)
+    dispatch(action.onLogOut(token))
   };
 
 

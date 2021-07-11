@@ -13,6 +13,7 @@ import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import * as action from 'redux/actions/actions';
 import { Modal } from 'react-bootstrap'
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -41,19 +42,17 @@ export default function Login() {
   const [email, setEmail] = useState(null)
   const [password, setPassword] = useState(null)
   const [displayModal, setmodalDisplay] = useState(false)
+  const history = useHistory();
 
-  // const state = useSelector(state => state);
-  // useEffect(() => { console.log("state", state) }, [state]);
+  const state = useSelector(state => state);
+  useEffect(() => { console.log("state", state) }, [state]);
 
   const submitLogin = async (event) => {
-    // console.log(email, password)
-
-
     axios.post('http://localhost:3000/api/user/login', { email, password }, { "Content-Type": "application/json", 'Access-Control-Allow-Origin': '*' }).then((response) => {
       if (response) {
         if (response.status == 200) {
           dispatch(action.onLogin(response.data))
-          window.location.href = '/admin'
+          history.push('/admin');
         } else
           setmodalDisplay(true);
       }
@@ -74,7 +73,7 @@ export default function Login() {
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component="h1" variant="h5">CD
+        <Typography component="h1" variant="h5">
           Sign in
         </Typography>
         <form className={classes.form} noValidate>
@@ -118,7 +117,7 @@ export default function Login() {
           </Button>
           <Grid container>
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href="/signup" variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>
