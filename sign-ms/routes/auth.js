@@ -15,18 +15,13 @@ router.post('/signup', async (req, res) => {
 
     //hash passwords
     const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(req.body.password, salt);
+    const hashPassword = await  util.createHashPassword(req,salt);
 
-    const user = new User({
-        name: req.body.name,
-        lastName: req.body.name,
-        email: req.body.email,
-        password: hashPassword
-    });
+    const user = util.createNewUser(req,hashPassword)
     try {
-        const saveUser = await user.save()
-        //  res.send(saveUser);
-        res.send({ user: user._id });
+       user.save()
+       const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET)
+       res.header('auth-token', token).send(token)
     } catch (error) {
         res.status(400).send(err)
     }

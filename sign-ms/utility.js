@@ -2,14 +2,31 @@ const { validate } = require('./model/User');
 const User = require('./model/User');
 const bcrypt = require('bcryptjs')
 
-const checkIfMailExist =  (req)=>{
-    return  User.findOne({ email: req.body.email }); 
-} 
+const checkIfMailExist = (req) => {
+    return User.findOne({ email: req.body.email });
+}
 
-const validatePassword =(req,user)=>{
+const validatePassword = (req, user) => {
     return bcrypt.compare(req.body.password, user.password)
 }
 
-module.exports ={
-    checkIfMailExist,validatePassword
+const createHashPassword = (req, salt) => {
+    return bcrypt.hash(req.body.password, salt)
+}
+
+const createNewUser = (req,hashPassword)=>{
+    return new User({
+        name: req.body.name,
+        lastName: req.body.name,
+        email: req.body.email,
+        password: hashPassword
+    });
+}
+
+
+module.exports = {
+    checkIfMailExist,
+    validatePassword,
+    createHashPassword,
+    createNewUser
 }
