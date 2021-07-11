@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const User = require('../model/User');
+const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const verify = require('./verifyToken')
 const util = require('../utility')
@@ -14,8 +15,12 @@ router.post('/signup', async (req, res) => {
     if (emailExist) {
         return res.status(400).send('Email is alredy exist')
     }
-   
-    const user = util.createNewUser(req)
+
+    //hash passwords
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(req.body.password, salt);
+
+    const user = util.createNewUser(req,hashPassword)
     try {
        user.save()
        const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET)

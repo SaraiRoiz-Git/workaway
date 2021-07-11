@@ -10,19 +10,15 @@ const validatePassword = (req, user) => {
     return bcrypt.compare(req.body.password, user.password)
 }
 
-const createHashPassword = async (password) => {
-    const salt = await bcrypt.genSalt(10);
-    return await bcrypt.hash(password, salt)
-}
-
-const createNewUser = (req)=>{
+const createNewUser = (req, hashPassword) => {
     return new User({
         name: req.body.name,
         lastName: req.body.name,
         email: req.body.email,
-        password: createHashPassword(req.body.password)
+        password: hashPassword
     });
 }
+
 
 module.exports = {
     checkIfMailExist,
