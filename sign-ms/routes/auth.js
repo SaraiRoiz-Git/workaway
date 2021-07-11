@@ -3,11 +3,12 @@ const User = require('../model/User');
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const verify = require('./verifyToken')
+const util = require('../utility')
 
 router.post('/signup', async (req, res) => {
 
     //checking if mail exist
-    const emailExist = await User.findOne({ email: req.body.email })
+    const emailExist = await util.checkIfMailExist(req)
     if (emailExist) {
         return res.status(400).send('Email is alredy exist')
     }
@@ -34,34 +35,25 @@ router.post('/signup', async (req, res) => {
 //login
 
 const cors = require('cors')
-var corsOptions = {
-    origin: 'localhost:3000'
-}
+
 router.post('/login', cors(), async (req, res) => {
-    // validate
-    // const {error} = loginValidation(req.body)
-    // if(error){
-    //     return res.status(400).send(error.details[0].massage)
-    // }
 
-
-    const user = await User.findOne({ email: req.body.email })
+    const user = await util.checkIfMailExist(req)
     if (!user) {
-        return res.status(400).send('1Email or password is worng')
+        return res.status(400).send('Email or password is worng')
     }
 
-    console.log(req.body);
-    console.log(user);
     //validate password
-    const validPass = await bcrypt.compare(req.body.password, user.password)
+    const validPass = await util.validatePassword(req,user)
     if (!validPass) {
-        return res.status(400).send('2Email or password is worng')
+        return res.status(400).send('Email or password is worng')
     }
 
     //create and assign token
     const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET)
     res.header('auth-token', token).send(token)
 })
+
 
 router.post("/logout", verify, (req, res) => {
     res.sendStatus(200);

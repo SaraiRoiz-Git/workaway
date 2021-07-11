@@ -1,10 +1,15 @@
+const { validate } = require('./model/User');
 const User = require('./model/User');
+const bcrypt = require('bcryptjs')
 
-const checkIfMailExist =  async(req,res)=>{
-    return await User.findOne({ email: req.body.email });
-   
+const checkIfMailExist =  (req)=>{
+    return  User.findOne({ email: req.body.email }); 
 } 
 
+const validatePassword =(req,user)=>{
+    return bcrypt.compare(req.body.password, user.password)
+}
+
 module.exports ={
-    checkIfMailExist
+    checkIfMailExist,validatePassword
 }
