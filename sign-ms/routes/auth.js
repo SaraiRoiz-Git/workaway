@@ -1,9 +1,11 @@
 const router = require('express').Router();
 const User = require('../model/User');
-const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const verify = require('./verifyToken')
 const util = require('../utility')
+const cors = require('cors')
+
+//signup routh
 
 router.post('/signup', async (req, res) => {
 
@@ -12,12 +14,8 @@ router.post('/signup', async (req, res) => {
     if (emailExist) {
         return res.status(400).send('Email is alredy exist')
     }
-
-    //hash passwords
-    const salt = await bcrypt.genSalt(10);
-    const hashPassword = await  util.createHashPassword(req,salt);
-
-    const user = util.createNewUser(req,hashPassword)
+   
+    const user = util.createNewUser(req)
     try {
        user.save()
        const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET)
@@ -28,9 +26,6 @@ router.post('/signup', async (req, res) => {
 });
 
 //login
-
-const cors = require('cors')
-
 router.post('/login', cors(), async (req, res) => {
 
     const user = await util.checkIfMailExist(req)
@@ -49,13 +44,14 @@ router.post('/login', cors(), async (req, res) => {
     res.header('auth-token', token).send(token)
 })
 
-
+//logout route
 router.post("/logout", verify, (req, res) => {
     res.sendStatus(200);
 });
 
+
 router.get("/data", verify, (req, res) => {
-    return res.sendStatus(200).send("ok");
+    return res.send("ok").sendStatus(200);
 });
 
 module.exports = router;
